@@ -18,7 +18,13 @@ public class UsuarioDaoTest {
     public void test_find_user_by_username() {
         EntityManager em = JPAUtil.getEntityManager();
         this.dao = new UsuarioDao(em);
-        Usuario usuario = dao.buscarPorUsername("fulano");
-        assertNotNull(usuario);
+
+        Usuario usuario = new Usuario("fulano", "fulano@gmail.com", "12345678");
+        em.getTransaction().begin();
+        em.persist(usuario);
+        em.getTransaction().commit();
+
+        Usuario encontrado = dao.buscarPorUsername(usuario.getNome());
+        assertNotNull(encontrado);
     }
 }
