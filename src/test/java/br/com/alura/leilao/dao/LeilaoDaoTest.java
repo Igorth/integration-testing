@@ -8,13 +8,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class LeilaoDaoTest {
 
@@ -43,6 +42,24 @@ public class LeilaoDaoTest {
         Leilao salvo = dao.buscarPorId(leilao.getId());
 
         assertNotNull(salvo);
+    }
+
+    @Test
+    public void should_update_leilao() {
+        Usuario usuario = criarUsuario();
+        Leilao leilao = new Leilao("Bag", new BigDecimal("70"), LocalDate.now(), usuario);
+
+        leilao = dao.salvar(leilao);
+
+        leilao.setNome("Notebook");
+        leilao.setValorInicial(new BigDecimal("30"));
+
+        leilao = dao.salvar(leilao);
+
+        Leilao salvo = dao.buscarPorId(leilao.getId());
+
+        assertEquals("Notebook", leilao.getNome());
+        assertEquals(new BigDecimal("30"), leilao.getValorInicial());
     }
 
     private Usuario criarUsuario() {
