@@ -3,6 +3,8 @@ package br.com.alura.leilao.dao;
 import br.com.alura.leilao.model.Leilao;
 import br.com.alura.leilao.model.Usuario;
 import br.com.alura.leilao.util.JPAUtil;
+import br.com.alura.leilao.util.builder.LeilaoBuilder;
+import br.com.alura.leilao.util.builder.UsuarioBuilder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,6 +21,7 @@ public class LeilaoDaoTest {
 
     private LeilaoDao dao;
     private EntityManager em;
+    private Usuario usuario;
 
     @BeforeEach
     public void beforeEach() {
@@ -34,8 +37,19 @@ public class LeilaoDaoTest {
 
     @Test
     public void should_register_leilao() {
-        Usuario usuario = criarUsuario();
-        Leilao leilao = new Leilao("Bag", new BigDecimal("70"), LocalDate.now(), usuario);
+        Usuario usuario = new UsuarioBuilder()
+                .comNome("Fulano")
+                .comEmail("fulano@gmail.com")
+                .comSenha("123456")
+                .criar();
+        em.persist(usuario);
+
+        Leilao leilao = new LeilaoBuilder()
+                .comNome("Desk")
+                .comValorInicial("500")
+                .comData(LocalDate.now())
+                .comUsuario(usuario)
+                .criar();
 
         leilao = dao.salvar(leilao);
 
@@ -46,8 +60,19 @@ public class LeilaoDaoTest {
 
     @Test
     public void should_update_leilao() {
-        Usuario usuario = criarUsuario();
-        Leilao leilao = new Leilao("Bag", new BigDecimal("70"), LocalDate.now(), usuario);
+        Usuario usuario = new UsuarioBuilder()
+                .comNome("Fulano")
+                .comEmail("fulano@gmail.com")
+                .comSenha("123456")
+                .criar();
+        em.persist(usuario);
+
+        Leilao leilao = new LeilaoBuilder()
+                .comNome("Desk")
+                .comValorInicial("500")
+                .comData(LocalDate.now())
+                .comUsuario(usuario)
+                .criar();
 
         leilao = dao.salvar(leilao);
 
@@ -60,11 +85,5 @@ public class LeilaoDaoTest {
 
         assertEquals("Notebook", leilao.getNome());
         assertEquals(new BigDecimal("30"), leilao.getValorInicial());
-    }
-
-    private Usuario criarUsuario() {
-        Usuario usuario = new Usuario("fulano", "fulano@gmail.com", "12345678");
-        em.persist(usuario);
-        return usuario;
     }
 }
